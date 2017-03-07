@@ -1,0 +1,16 @@
+{
+    "name": "mixeddimensions/makeprintable-php",
+    "description": "Sample PHP Implementation that consumes MakePrintable APIs. Edit",
+    "type": "project",
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mu'men Yassin",
+            "email": "yassin.mumen@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
