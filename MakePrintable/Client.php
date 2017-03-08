@@ -12,6 +12,12 @@ class Client
 	const GRANT_TYPE_CLIENT_CREDENTIALS = 1;
 	const GRANT_TYPE_AUTHORIZATION_CODE = 2;
 
+	const TYPE_OBJ = 'obj';
+	const TYPE_STL = 'stl';
+	const TYPE_3MF = '3mf';
+	const TYPE_GCODE = 'gcode';
+	const TYPE_SVG = 'svg';
+	
 	private $host;
 	private $clientId;
 	private $clientSecret;
@@ -135,6 +141,37 @@ class Client
 
 			sleep(3);
 		} while ($response->status == 201 || ($response->status == 200 && $response->data->status == 'fixing'));
+
+		return $response->data;
+	}
+
+	public function download($id, string $type = Client::TYPE_OBJ, \Closure $progressCallback = null)
+	{
+		if (!in_array($type, [
+			Client::TYPE_3MF,
+			Client::TYPE_GCODE,
+			Client::TYPE_SVG,
+			Client::TYPE_OBJ,
+			Client::TYPE_STL
+		]))
+			throw new RuntimeException("Invalid File Type.");
+
+		if (in_array($type, [
+			Client::TYPE_3MF,
+			Client::TYPE_GCODE,
+			Client::TYPE_SVG
+		])) {
+			do {
+				$response = $this->sendEndpointRequest("items/download/$id/$type", 'POST');
+
+				if (!empty($progressCallback))
+					$progressCallback($response);
+
+				sleep(3);
+			} while (!in_array($response->data->progress, ['Failed', 'Completed']));
+		}
+
+		$response = $this->sendEndpointRequest("items/download/$id/$type", 'GET');
 
 		return $response->data;
 	}

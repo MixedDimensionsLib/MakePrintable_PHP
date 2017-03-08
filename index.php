@@ -68,7 +68,24 @@ class MakePrintableSample
 			die($e->getMessage());
 		}
 
-		var_dump($fixedModel);die;
+		// Repairing model.
+		try {
+			echo "Converting Model To 3MF.";
+			$threeMFModel = $makePrintableClient->download($uploadedFile->id, Client::TYPE_3MF, function($update){
+				echo ".";
+			});
+			echo PHP_EOL;
+		} catch (\Exception $e) {
+			die($e->getMessage());
+		}
+
+		// You can download the file using the link returned from "download" method.
+		echo "Downloading Model.";
+		file_put_contents(__DIR__.'/MyFixedModel.zip', fopen($threeMFModel->download_link, 'r'));
+		
+		echo PHP_EOL;
+		echo "Model Repaired & Downloaded Successfully.";
+		echo PHP_EOL;
 	}
 }
 
